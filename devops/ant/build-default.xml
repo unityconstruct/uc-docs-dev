@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE project [ 
+]>
+<project name="Module_Junit_Ant" default="useage" basedir=".">
+  <!--  ============ Initialize Properties ================ -->
+  <description>
+        Apache Ant build.xml file for Selenium tests
+  </description>
+  <!-- set global properties for this build -->
+  <property name="ws.home" value="${basedir}" />
+  <property name="ws.jars" value="D:/jars" />
+  <!-- when compile the programs.. send .classes to /build -->
+  <property name="test.dest" value="${ws.home}/build" />
+  <!-- where .java files reside -->
+  <property name="test.src" value="${ws.home}/src" />
+  <!-- Reports directory -->
+  <property name="test.reportsDir" value="D:/Eclipse/Java/reports" />
+  <!--  property name="env.ANT_HOME" value="C:/apache-ant-1.8.4/bin"/-->
+
+  <path id="testcase.path">
+    <pathelement location="${test.dest}" />
+    <fileset dir="${ws.jars}">
+      <include name="*.jar" />
+    </fileset>
+  </path>
+  
+  <!-- target name="start-selenium-server">
+  	<java jar="${ws.home}/lib/selenium-server.jar"/>
+  </target-->
+
+  <target name="setClassPath" unless="test.classpath">
+    <path id="classpath_jars">
+      <fileset dir="${ws.jars}" includes="*.jar" />
+    </path>
+    <pathconvert pathsep=":" property="test.classpath" refid="classpath_jars" />
+  </target>
+
+  <target name="init" depends="setClassPath">
+    <tstamp>
+      <format property="start.time" pattern="MM/dd/yyyy hh:mm aa" />
+    </tstamp>
+    <condition property="ANT" value="${env.ANT_HOME}/bin/ant.bat" else="${env.ANT_HOME}/bin/ant">
+      <os family="windows" />
+    </condition>
+    <taskdef name="testng" classpath="${test.classpath}" classname="org.testng.TestNGAntTask" />
+  </target>
+  <!--  all  -->
+  <target name="all"></target>
+
+  <!-- clean -->
+  <target name="clean">
+    <delete dir="${test.dest}" />
+  </target>
+
+  <!-- compile -->
+  <target name="compile" depends="init, clean">
+      <!--  delete dir"", even empty directories -->
+    <delete includeemptydirs="true" quiet="true">
+        <!-- include="**/*" means all files and subdirs -->
+      <fileset dir="${test.dest}" includes="**/*" />
+    </delete>
+    <echo message="making directory..." />
+    <!--  where to put the .class compiled files  -->
+    <mkdir dir="${test.dest}" />
+    <echo message="classpath-----: ${test.classpath}" />
+    <echo message="compiling..." />
+    <javac debug="true" destdir="${test.dest}" srcdir="${test.src}" target="1.5" classpath="${test.classpath}"></javac>
+  </target>
+
+  <!--  build -->
+  <target name="build" depends="init"></target>
+  <target name="usage">
+    <echo>
+          ant run will execute the test
+      </echo>
+  </target>
+
+  <path id="test.c">
+    <fileset dir="${ws.jars}" includes="*.jar" />
+  </path>
+<!--  Executes all the tests "run" -->
+  <target name="run">
+      <!--  delete dir"", even empty directories -->
+    <delete includeemptydirs="true" quiet="true">
+        <!-- include="**/*" means all files and subdirs -->
+      <fileset dir="${test.reportsDir}" includes="**/*" />
+    </delete>
+    <java jar="${ws.jars}" fork="true" spawn="true" />
+    <junit fork="yes" haltonfailure="no" printsummary="yes">
+      <classpath refid="testcase.path" />
+      <!-- classpath ="${test.classpath}"/> -->
+
+<!-- 1-Run test in the fileset -->
+
+      <batchtest todir="${test.reportsDir}" fork="true">
+        <fileset dir="${test.dest}">
+          <!--include name="testcases/FirstTest.class" /-->
+          <!--include name="testcases/SecondTest.class"/-->
+          <include name="testcases/FirstTestCase.class" />
+          <include name="testcases/SecondTestCase.class" />
+          <include name="testcases/ParameterizedTestCase.class" />
+          <include name="testcases/UnderstandingAssertions.class" />
+          <!--  exclude name="**/AbstractSeleneseTestCase.class"/ -->
+        </fileset>
+      </batchtest>
+      <formatter type="xml" />
+      <classpath refid="testcase.path" />
+    </junit>
+<!-- Send JUNIT reports to this directory -->
+    <junitreport todir="${test.reportsDir}">
+      <fileset dir="${test.reportsDir}">
+        <include name="TEST-*.xml" />
+      </fileset>
+      <report todir="${test.reportsDir}" />
+    </junitreport>
+  </target>
+</project>
