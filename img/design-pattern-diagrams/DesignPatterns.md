@@ -5,8 +5,15 @@
 <summary>Creational Patterns</summary>
 
 ![AbstractFactory][AbstractFactory]
+* info
+
 ![Builder][Builder]
+* info
+
 ![FactoryMethod][FactoryMethod]
+* info 1
+
+
 ![Prototype][Prototype]
 ![Singleton][Singleton]
 
@@ -140,4 +147,13 @@
 [Strategy]:Strategy-comp.png (Strategy)
 [TemplateMethod]:TemplateMethod-comp.png (TemplateMethod)
 [Visitor]:Visitor-comp.png (Visitor)
+
+
+see this text: [textdef]
+
+
+<!-- TEXT Definitions -->
+[textdef]: mytext-is-raw ( "asdfsadf")
+
+
 
